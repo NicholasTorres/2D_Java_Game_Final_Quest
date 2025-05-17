@@ -294,6 +294,7 @@ public class KeyHandler implements KeyListener {
     }
 
 
+    // Trying to fix commit
     // Method to use selected item in combat
     private void useSelectedItem() {
         int itemIndex = gp.ui.getItemIndexOnSlot();

@@ -14,5 +14,6 @@ public class OBJ_Hotdog extends Entity {
             down1 = setup("/objects/Hotdog");
             description = "[" + name + "]\nNothing beats a good dog";
             type = 5;
+            // Trying to fix commit
         }
 }
