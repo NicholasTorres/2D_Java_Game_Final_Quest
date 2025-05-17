@@ -77,6 +77,12 @@ public class UI {
             drawCombatScreen();
             drawMessage();
         }
+        // Combat Inventory
+        if (gp.gameState == gp.inventoryCombatState){
+            drawCombatScreen();
+            drawMessage();
+            drawInventory();
+        }
     }
 
     public void drawCombatScreen() {

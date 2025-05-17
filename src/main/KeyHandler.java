@@ -133,9 +133,9 @@ public class KeyHandler implements KeyListener {
                     gp.ui.slotCol++;
                 }
             }
-            //if (code == KeyEvent.VK_ENTER) {
-                //useSelectedItem();
-            //}
+            if (code == KeyEvent.VK_ENTER) {
+                useSelectedItem();
+            }
             if (code == KeyEvent.VK_ESCAPE) {
                 // Return to combat menu
                 gp.gameState = gp.combatState;
