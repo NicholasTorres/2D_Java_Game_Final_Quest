@@ -4,6 +4,7 @@ import main.GamePanel;
 import main.KeyHandler;
 import main.UtilityTool;
 import object.*;
+import main.UI;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,6 +19,8 @@ public class Player extends Entity{
     public boolean attackCanceled = false;
     public ArrayList<Entity> inventory = new ArrayList<>();
     public final int inventorySize = 20;
+    public int combatSpriteCounter = 0; // New counter for combat animation
+    public int combatSpriteNum = 1;     // New sprite number for combat
 
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -53,6 +56,7 @@ public class Player extends Entity{
         x = 15 * gp.tileSize; // Spawning x
         y = 15 * gp.tileSize; // spawning y
         speed = 10; // How fast a player can move
+        originalSpeed = 10;
         direction = "down"; // How the player spawns when booting game up
 
         // Player stuff
@@ -81,6 +85,17 @@ public class Player extends Entity{
     }
     public int getDefense(){
         return defense = dexterity * currentArmor.defenseValue;
+    }
+
+    public void startCombat(int monsterIndex) {
+        // Store which monster we're fighting
+        gp.currentCombatMonsterIndex = monsterIndex;
+
+        // Set initial combat UI state
+        UI.combatCommandNum = 0;
+
+        // Change game state to combat
+        gp.gameState = gp.combatState;
     }
 
     // Player images for walking
@@ -207,7 +222,20 @@ public class Player extends Entity{
                 spriteCounter = 0;
             }
         }
-        if(invincible == true){
+        if (gp.gameState == gp.combatState){
+            invincible = true;
+            combatSpriteCounter++;
+            if (combatSpriteCounter > 12) {
+                if (combatSpriteNum == 1) {
+                    combatSpriteNum = 2;
+                } else if (combatSpriteNum == 2) {
+                    combatSpriteNum = 1;
+                }
+                combatSpriteCounter = 0;
+            }
+        }
+
+        if(invincible == true & gp.gameState == gp.playState){
             invincibleCounter++;
             if (invincibleCounter > 60){
                 invincible = false;
@@ -312,7 +340,17 @@ public class Player extends Entity{
             }
         }
     }
+// Testing combat state with contacting monster
+    public void contactMonster(int i) {
+        if (i != 999) {
+            gp.gameState = gp.combatState;
+            startCombat(i);
+            gp.currentCombatMonsterIndex = i; // Store the index here
+            System.out.println("Combat started with monster at index: " + gp.currentCombatMonsterIndex); // For debugging
+        }
+    }
 
+    /*
     // If the player is not invincible, the monster will do damage equal to their attack minus player defense
     // Damage below zero is set to zero and the life is subtracted and invincibility for the player granted
     public void contactMonster(int i) {
@@ -328,6 +366,7 @@ public class Player extends Entity{
             }
         }
     }
+    */
 
     // Checks to the see if monster is invincible, if not it will do damage calcs (simple defense - attack and vice versa)
     // It decreased monster HP and makes them invincible and displays their reaction plus a message of your damage to the mob
@@ -366,6 +405,9 @@ public class Player extends Entity{
             nextLevelExp = nextLevelExp * 2;
             exp = 0;
             maxLife += 2;
+            if (life != maxLife){
+                life = maxLife;
+            }
             strength++;
             dexterity++;
             attack = getAttack();

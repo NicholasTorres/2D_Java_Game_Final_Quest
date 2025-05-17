@@ -17,6 +17,7 @@ public class MON_GreenSlime extends Entity {
         type = type_monster;
         name = "Green Slime";
         speed = 1;
+        originalSpeed = 1;
         direction = "down";
         maxLife = 4;
         life = maxLife;
@@ -42,9 +43,18 @@ public class MON_GreenSlime extends Entity {
         gp.cChecker.checkObject(this, false);
         gp.cChecker.checkEntity(this, gp.npc);
         gp.cChecker.checkEntity(this, gp.monster);
-        //gp.cChecker.checkEntity(this, new Entity[][]{gp.player});
         boolean contactPlayer = gp.cChecker.checkPlayer(this);
 
+        // This is the test for turn based combat
+        if(this.type == 2 && contactPlayer == true){
+            if(gp.player.invincible == false){
+                gp.gameState = gp.combatState;
+            }
+            gp.player.invincible = true;
+        }
+
+        /*
+        // This is for non turn base combat where the slime touches the player and does damage to hp
         if(this.type == 2 && contactPlayer == true){
             if(gp.player.invincible == false){
                 int damage = attack - gp.player.defense;
@@ -55,6 +65,7 @@ public class MON_GreenSlime extends Entity {
                 gp.player.invincible = true;
             }
         }
+        */
 
         if (collisionOn == false) {
             switch (direction) {

@@ -24,9 +24,12 @@ public class Entity {
     public final int type_monster = 2;
     public final int type_staff = 3;
     public final int type_robe = 4;
+    public final int type_consumable = 5;
 
     // Character Stats
     public int speed;
+    public int combatSpeed = 0;
+    public int originalSpeed;
     public String name = "default";
     public int maxLife;
     public int life;
@@ -103,7 +106,6 @@ public class Entity {
         gp.cChecker.checkEntity(this, gp.monster);
         //gp.cChecker.checkEntity(this, new Entity[][]{gp.player});
         boolean contactPlayer = gp.cChecker.checkPlayer(this);
-
 
         if(this.type == type_monster && contactPlayer == true){
             if(gp.player.invincible == false){

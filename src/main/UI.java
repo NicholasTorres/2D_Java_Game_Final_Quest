@@ -1,10 +1,8 @@
 package main;
 
 import entity.Entity;
+import monster.MON_GreenSlime;
 import object.OBJ_Heart;
-import object.OBJ_Key;
-//import object.SuperObject;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -21,13 +19,15 @@ public class UI {
     ArrayList<Integer> messageCounter = new ArrayList<>();
     public int slotCol = 0;
     public int slotRow = 0;
+    public int combatOptionRow = 0;
+    public final String[] combatOptions = {"Attack", "Spells", "Items", "Defend", "Escape"};
+    public boolean combatOptionsVisible = false;
+    public static int combatCommandNum = 0;
 
     public UI(GamePanel gp){
         this.gp = gp;
 
         timesNewRoman_40 = new Font("Arial", Font.PLAIN, 30);
-        //OBJ_Key key =new OBJ_Key();
-        //keyImage = key.image;
 
         // Create HUD
         Entity heart = new OBJ_Heart(gp);
@@ -72,8 +72,171 @@ public class UI {
             drawInventory();
         }
 
-        //g2.drawImage(keyImage, gp.tileSize/2, gp.tileSize/2, gp.tileSize, gp.tileSize, null);
-        //g2.drawString("x " + gp.player.hasKey, 74, 65);
+        // Combat State
+        if (gp.gameState == gp.combatState){
+            drawCombatScreen();
+            drawMessage();
+        }
+    }
+
+    public void drawCombatScreen() {
+        //Window
+        int x = gp.tileSize + (gp.screenWidth / 6);
+        int y = gp.tileSize + (gp.screenHeight / 7);
+        int width = gp.screenWidth - (gp.tileSize * 15);
+        int height = gp.screenHeight - (gp.tileSize * 10);
+        drawCombatWindow(x, y, width, height);
+
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 28F));
+        x += gp.tileSize;
+        y += gp.tileSize;
+
+        // --- Drawing Sprites ---
+
+        // Player drawing position (adjust as needed)
+        int playerX = gp.tileSize + (gp.screenWidth / 3) + 200;
+        int playerY = gp.tileSize + (gp.screenHeight / 2);
+
+        // Enemy (Slime) drawing position (adjust as needed)
+        int slimeX = gp.tileSize + (gp.screenWidth / 3) + 200;
+        int slimeY = gp.tileSize + (gp.screenHeight / 5 + 40);
+
+        // Get player sprite
+        BufferedImage playerSprite = null;
+        if (gp.gameState == gp.combatState) {
+            if (gp.player.combatSpriteNum == 1) {
+                playerSprite = gp.player.up1; // Or whichever sprite you want for combat frame 1
+            } else if (gp.player.combatSpriteNum == 2) {
+                playerSprite = gp.player.up2; // Or whichever sprite you want for combat frame 2
+            }
+        }
+
+        // Get slime sprite (assuming your Slime class has a 'down1' BufferedImage)
+        if (gp.currentCombatMonsterIndex != -1 &&
+                gp.monster[gp.currentMap] != null &&
+                gp.currentCombatMonsterIndex < gp.monster[gp.currentMap].length &&
+                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex] != null &&
+                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].type == gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].type_monster) {
+
+            MON_GreenSlime slime = (MON_GreenSlime) gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
+            BufferedImage slimeSprite = null;
+
+            switch (slime.direction) {
+                case "up":
+                case "right":
+                case "left":
+                case "down":
+                    if (slime.spriteNum == 1) slimeSprite = slime.one;
+                    else if (slime.spriteNum == 2) slimeSprite = slime.two;
+                    else if (slime.spriteNum == 3) slimeSprite = slime.three;
+                    else if (slime.spriteNum == 4) slimeSprite = slime.four;
+                    else if (slime.spriteNum == 5) slimeSprite = slime.five;
+                    else if (slime.spriteNum == 6) slimeSprite = slime.six;
+                    else if (slime.spriteNum == 7) slimeSprite = slime.seven;
+                    else if (slime.spriteNum == 8) slimeSprite = slime.eight;
+                    else if (slime.spriteNum == 9) slimeSprite = slime.nine;
+                    else if (slime.spriteNum == 10) slimeSprite = slime.ten;
+                    else if (slime.spriteNum == 11) slimeSprite = slime.eleven;
+                    else if (slime.spriteNum == 12) slimeSprite = slime.twelve;
+                    break;
+            }
+
+            // Draw the player sprite
+            if (playerSprite != null) {
+                g2.drawImage(playerSprite, playerX, playerY, gp.tileSize * 2, gp.tileSize * 2, null); // Adjust size as needed
+            }
+
+            // Draw the slime sprite
+            if (slimeSprite != null) {
+                g2.drawImage(slimeSprite, slimeX, slimeY, gp.tileSize * 2, gp.tileSize * 2, null); // Adjust size as needed
+            }
+            // Draw monster health
+            int monsterHealthX = slimeX;
+            int monsterHealthY = slimeY - 20;
+            int monsterHealthWidth = gp.tileSize * 2;
+            int monsterHealthHeight = 10;
+
+            // Health bar background
+            g2.setColor(new Color(35, 35, 35));
+            g2.fillRect(monsterHealthX, monsterHealthY, monsterHealthWidth, monsterHealthHeight);
+
+            // Calculate health percentage
+            double healthPercentage = (double) slime.life / slime.maxLife;
+            int currentHealthWidth = (int) (monsterHealthWidth * healthPercentage);
+
+            // Health bar fill
+            g2.setColor(new Color(255, 0, 30));
+            g2.fillRect(monsterHealthX, monsterHealthY, currentHealthWidth, monsterHealthHeight);
+
+            // Health bar border
+            g2.setColor(Color.WHITE);
+            g2.setStroke(new BasicStroke(1));
+            g2.drawRect(monsterHealthX, monsterHealthY, monsterHealthWidth, monsterHealthHeight);
+
+            // Monster name and HP text
+            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18F));
+            g2.drawString("Slime HP: " + slime.life + "/" + slime.maxLife, monsterHealthX, monsterHealthY - 5);
+        }
+        // Draw Combat Menu
+        drawCombatMenu();
+    }
+
+    public void drawCombatMenu() {
+        // Combat options menu frame
+        int frameX = gp.tileSize + (gp.screenWidth / 6);
+        int frameY = gp.tileSize * 15;
+        int frameWidth = gp.tileSize * 18;
+        int frameHeight = gp.tileSize * 4;
+
+        drawCombatWindow(frameX,frameY, frameWidth, frameHeight);
+
+        // Draw options
+        g2.setColor(Color.WHITE);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+
+        int textX;
+        int textY;
+
+        // Draw combat options in a horizontal row
+        for (int i = 0; i < combatOptions.length; i++) {
+            textX = frameX + gp.tileSize + (i * (frameWidth / combatOptions.length));
+            textY = frameY + gp.tileSize * 2;
+
+            // Draw cursor
+            if (combatCommandNum == i) {
+                g2.setColor(Color.YELLOW);
+                // Draw triangle cursor
+                int[] xPoints = {textX - 20, textX - 10, textX - 20};
+                int[] yPoints = {textY - 15, textY - 5, textY + 5};
+                g2.fillPolygon(xPoints, yPoints, 3);
+                g2.setColor(Color.YELLOW);
+            } else {
+                g2.setColor(Color.WHITE);
+            }
+
+            g2.drawString(combatOptions[i], textX, textY);
+        }
+
+        // Description at the bottom
+        g2.setFont(g2.getFont().deriveFont(Font.ITALIC, 24F));
+        textX = frameX + 20;
+        textY = frameY + frameHeight - 20;
+
+        String description = "";
+        switch(combatCommandNum) {
+            case 0:
+                description = "Basic attack with equipped weapon"; break;
+            case 1:
+                description = "Cast a spell using MP"; break;
+            case 2:
+                description = "Use an item from your inventory"; break;
+            case 3:
+                description = "Take defensive stance to reduce damage"; break;
+            case 4:
+                description = "Try to escape from battle"; break;
+        }
+
+        g2.drawString(description, textX, textY);
     }
 
     public void drawPlayerlife(){
@@ -103,8 +266,6 @@ public class UI {
             i++;
             x += (gp.tileSize + 5);
         }
-
-
     }
 
     public void drawMessage(){
@@ -143,7 +304,6 @@ public class UI {
     }
 
     public void drawDialogueScreen(){
-
         //Window
         int x = gp.tileSize * 2;
         int y = gp.tileSize / 2;
@@ -339,6 +499,18 @@ public class UI {
         g2.fillRoundRect(x,y,width,height,35,35);
 
         c = new Color(255,255,255);
+        g2.setColor(c);
+        g2.setStroke(new BasicStroke(5));
+        g2.drawRoundRect(x+5,y+5,width-10,height-10,25,25);
+    }
+
+    public void drawCombatWindow(int x, int y, int width, int height){
+
+        Color c = new Color(0,0,0,255);
+        g2.setColor(c);
+        g2.fillRoundRect(x,y,width,height,35,35);
+
+        c = new Color(255,255,255,255);
         g2.setColor(c);
         g2.setStroke(new BasicStroke(5));
         g2.drawRoundRect(x+5,y+5,width-10,height-10,25,25);

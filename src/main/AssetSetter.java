@@ -17,7 +17,6 @@ public class AssetSetter {
 
     // Here we have our method to set an object
     public void setObject(){
-/*
         int mapNum = 0;
         int i = 0;
         // We created 2 keys, since OBJ_Key is a child class of SuperObject we can create a new key like this
@@ -48,7 +47,6 @@ public class AssetSetter {
         gp.obj[mapNum][i].y = gp.tileSize * 18;
         i++;
 
- */
     }
 
 
@@ -67,10 +65,6 @@ public class AssetSetter {
 
         int mapNum = 0;
         int i = 0;
-        gp.monster[mapNum][i] = new MON_GreenSlime(gp);
-        gp.monster[mapNum][i].x = 15 * gp.tileSize;
-        gp.monster[mapNum][i].y = 14 * gp.tileSize;
-        i++;
         gp.monster[mapNum][i] = new MON_GreenSlime(gp);
         gp.monster[mapNum][i].x = 11 * gp.tileSize;
         gp.monster[mapNum][i].y = 11 * gp.tileSize;

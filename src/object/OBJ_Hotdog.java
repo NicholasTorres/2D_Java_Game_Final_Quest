@@ -13,5 +13,6 @@ public class OBJ_Hotdog extends Entity {
             name = "Hotdog";
             down1 = setup("/objects/Hotdog");
             description = "[" + name + "]\nNothing beats a good dog";
+            type = 5;
         }
 }

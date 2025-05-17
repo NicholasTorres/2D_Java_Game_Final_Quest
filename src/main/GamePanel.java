@@ -27,6 +27,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; // originally 576 pixels
     public final int maxMap = 10;
     public int currentMap = 0;
+    public int currentCombatMonsterIndex = -1;
 
     // FPS
     int FPS = 60;
@@ -69,6 +70,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int dialogueState = 3;
     public final int characterState = 4;
     public final int combatState = 5;
+    public final int inventoryCombatState = 6;  // New state for inventory during combat
+    public final int gameOverState = 7;    // New game over state
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -141,8 +144,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() throws IOException {
         // This updates our players as the game runs AND as the game is not paused
         if (gameState == playState) {
-
-            //player2.update();
+            player.speed = player.originalSpeed;
             player.update();
 
             for (int i = 0; i < npc[1].length; i++) {
@@ -153,6 +155,7 @@ public class GamePanel extends JPanel implements Runnable {
             for (int i = 0; i < monster[1].length; i++) {
                 if (monster[currentMap][i] != null) {
                     if (monster[currentMap][i].alive == true && monster[currentMap][i].dying == false) {
+                        monster[currentMap][i].speed = monster[currentMap][i].originalSpeed;
                         monster[currentMap][i].update();
                     }
                     if (monster[currentMap][i].alive == false) {
@@ -165,6 +168,18 @@ public class GamePanel extends JPanel implements Runnable {
         // This will tell the game to do nothing when it is paused
         if (gameState == pauseState) {
 
+        }
+        if (gameState == combatState) {
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    if (monster[currentMap][i].alive == true && monster[currentMap][i].dying == false) {
+                        monster[currentMap][i].speed = monster[currentMap][i].combatSpeed;
+                        monster[currentMap][i].update();
+                    }
+                }
+            }
+            player.speed = player.combatSpeed;
+            player.update();
         }
     }
 
