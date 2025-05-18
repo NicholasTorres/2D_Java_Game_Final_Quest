@@ -107,8 +107,28 @@ public class KeyHandler implements KeyListener {
                 executeCombatCommand();
             }
             if (code == KeyEvent.VK_ESCAPE) {
-                // Debug escape from combat if needed
-                // gp.gameState = gp.playState;
+                gp.gameState = gp.combatState;
+            }
+        }
+        // Combat Spell State
+        else if (gp.gameState == gp.combatSpellState){
+            if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
+                gp.ui.combatCommandSpellNum--;
+                if (gp.ui.combatCommandSpellNum < 0) {
+                    gp.ui.combatCommandSpellNum = gp.ui.combatOptions.length - 1;
+                }
+            }
+            if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
+                gp.ui.combatCommandSpellNum++;
+                if (gp.ui.combatCommandSpellNum >= gp.ui.combatOptions.length) {
+                    gp.ui.combatCommandSpellNum = 0;
+                }
+            }
+            if (code == KeyEvent.VK_SPACE){
+                executeCombatCommand();
+            }
+            if (code == KeyEvent.VK_ESCAPE) {
+                gp.gameState = gp.combatState;
             }
         }
         // Inventory in combat state
@@ -172,8 +192,7 @@ public class KeyHandler implements KeyListener {
                 performPlayerAttack();
                 break;
             case 1: // Spells
-                // To be implemented - open spell selection submenu
-                gp.ui.addMessage("Spells not implemented yet!");
+                gp.gameState = gp.combatSpellState;
                 break;
             case 2: // Items
                 // Open inventory in combat context
@@ -197,6 +216,9 @@ public class KeyHandler implements KeyListener {
 
             Entity monster = gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
 
+            gp.gameState = gp.combatAnimationState;
+            gp.player.animationCounter = 0;
+
             // Calculate damage
             int damage = gp.player.attack - monster.defense;
             if (damage < 0) {
@@ -208,9 +230,6 @@ public class KeyHandler implements KeyListener {
 
             // Show damage message
             gp.ui.addMessage("Player dealt " + damage + " damage!");
-
-            gp.gameState = gp.combatAnimationState;
-            gp.player.animationCounter = 0;
 
             // Check if monster is defeated
             if (monster.life <= 0) {

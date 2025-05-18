@@ -23,6 +23,9 @@ public class UI {
     public final String[] combatOptions = {"Attack", "Spells", "Items", "Defend", "Escape"};
     public boolean combatOptionsVisible = false;
     public static int combatCommandNum = 0;
+    public static int combatCommandSpellNum = 0;
+    public boolean combatSpellOptionsVisible = false;
+    public final String[] combatSpellOptions = {"Fire", "Blizzard", "Thunder", "Wind", "Earth"};
 
     public UI(GamePanel gp){
         this.gp = gp;
@@ -89,19 +92,24 @@ public class UI {
             drawMessage();
             drawBasicAttack();
         }
+        // Combat Spell
+        if (gp.gameState == gp.combatSpellState){
+            drawCombatScreen();
+            drawMessage();
+            drawSpellMenu();
+        }
     }
 
     public void drawBasicAttack() {
-        int animationX = gp.tileSize + (gp.screenWidth / 3) + 200;
+        int animationX = gp.tileSize + (gp.screenWidth / 3) + 200; // This x and y places the animation right on top of the enemy
         int AnimationY = gp.tileSize + (gp.screenHeight / 5 + 40);
         int animationSpeed = 5; // Animation speed wow no way
 
         if (gp.gameState == gp.combatAnimationState) {
             BufferedImage animationSprite = null;
 
-            if (gp.player.animationCounter < 12 * animationSpeed) { // Control how long each frame is shown
-                int frameIndex = gp.player.animationCounter / animationSpeed + 1; // Calculate the current frame
-
+            if (gp.player.animationCounter < 12 * animationSpeed) { // Controls how long each frame is shown (literally its just 60 FPS)
+                int frameIndex = gp.player.animationCounter / animationSpeed + 1; // animation counter starts at 0 so the + 1 is for 0 cases
                 if (frameIndex == 1) {
                     animationSprite = gp.player.atk1;
                 } else if (frameIndex == 2) {
@@ -303,6 +311,65 @@ public class UI {
                 description = "Take defensive stance to reduce damage"; break;
             case 4:
                 description = "Try to escape from battle"; break;
+        }
+
+        g2.drawString(description, textX, textY);
+    }
+
+    public void drawSpellMenu() {
+        // Combat options menu frame
+        int frameX = gp.tileSize + (gp.screenWidth / 6);
+        int frameY = gp.tileSize * 15;
+        int frameWidth = gp.tileSize * 18;
+        int frameHeight = gp.tileSize * 4;
+
+        drawCombatWindow(frameX,frameY, frameWidth, frameHeight);
+
+        // Draw options
+        g2.setColor(Color.WHITE);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+
+        int textX;
+        int textY;
+
+        // Draw combat options in a horizontal row
+        for (int i = 0; i < combatSpellOptions.length; i++) {
+            textX = frameX + gp.tileSize + (i * (frameWidth / combatSpellOptions.length));
+            textY = frameY + gp.tileSize * 2;
+
+            // Draw cursor
+            if (combatCommandSpellNum == i) {
+                g2.setColor(Color.YELLOW);
+                // Draw triangle cursor
+                int[] xPoints = {textX - 20, textX - 10, textX - 20};
+                int[] yPoints = {textY - 15, textY - 5, textY + 5};
+                g2.fillPolygon(xPoints, yPoints, 3);
+                g2.setColor(Color.YELLOW);
+            } else {
+                g2.setColor(Color.WHITE);
+            }
+
+            g2.drawString(combatSpellOptions[i], textX, textY);
+        }
+
+        // Description at the bottom
+        g2.setFont(g2.getFont().deriveFont(Font.ITALIC, 24F));
+        g2.setColor(Color.WHITE);
+        textX = frameX + 20;
+        textY = frameY + frameHeight - 20;
+
+        String description = "";
+        switch(combatCommandSpellNum) {
+            case 0:
+                description = "A small flame: deals weak fire damage"; break;
+            case 1:
+                description = "A cold marble of ice: deals weak ice damage"; break;
+            case 2:
+                description = "A tiny jolt of electricity: deals weak lightning damage"; break;
+            case 3:
+                description = "A soothing breeze: heals 4 HP"; break;
+            case 4:
+                description = "A collection of rocky plates: defense up by 2"; break;
         }
 
         g2.drawString(description, textX, textY);

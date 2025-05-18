@@ -74,7 +74,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int combatState = 5;
     public final int inventoryCombatState = 6;  // New state for inventory during combat
     public final int gameOverState = 7;    // New game over state
-    public final int combatAnimationState= 8; // Lets give this a shot
+    public final int combatAnimationState= 8; // Handles animations during combat
+    public final int combatSpellState = 9; // This will be the menu for spells
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -172,7 +173,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == pauseState) {
 
         }
-        if (gameState == combatState || gameState == inventoryCombatState || gameState == combatAnimationState) {
+        if (gameState == combatState || gameState == inventoryCombatState || gameState == combatAnimationState || gameState == combatSpellState) {
             for (int i = 0; i < monster[1].length; i++) {
                 if (monster[currentMap][i] != null) {
                     if (monster[currentMap][i].alive == true && monster[currentMap][i].dying == false) {

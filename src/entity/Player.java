@@ -21,7 +21,7 @@ public class Player extends Entity{
     public final int inventorySize = 20;
     public int combatSpriteCounter = 0;
     public int animationSpriteCounter = 0;
-    public int animationCounter = 0;// New counter for combat animation
+    public int animationCounter = 0 ;// Controls the lockout when performing animations
     public int combatSpriteNum = 1;     // New sprite number for combat
     public int animationSprite = 1;
 
@@ -245,7 +245,7 @@ public class Player extends Entity{
                 spriteCounter = 0;
             }
         }
-        if (gp.gameState == gp.combatState || gp.gameState == gp.inventoryCombatState){
+        if (gp.gameState == gp.combatState || gp.gameState == gp.inventoryCombatState || gp.gameState == gp.combatSpellState){
             invincible = true;
             combatSpriteCounter++;
             if (combatSpriteCounter > 12) {
