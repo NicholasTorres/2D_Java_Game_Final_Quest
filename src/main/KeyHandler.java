@@ -168,6 +168,7 @@ public class KeyHandler implements KeyListener {
     public void executeCombatCommand() {
         switch (gp.ui.combatCommandNum) {
             case 0: // Attack
+                gp.gameState = gp.combatAnimationState;
                 performPlayerAttack();
                 break;
             case 1: // Spells
@@ -208,6 +209,9 @@ public class KeyHandler implements KeyListener {
             // Show damage message
             gp.ui.addMessage("Player dealt " + damage + " damage!");
 
+            gp.gameState = gp.combatAnimationState;
+            gp.player.animationCounter = 0;
+
             // Check if monster is defeated
             if (monster.life <= 0) {
 
@@ -237,8 +241,8 @@ public class KeyHandler implements KeyListener {
     private void playerDefend() {
         // Increase player defense temporarily for this turn
         int originalDefense = gp.player.defense;
-        gp.player.defense *= 2; // Double defense while defending
-        gp.ui.addMessage("You take defensive stance!");
+        gp.player.defense += 1; // Double defense while defending
+        gp.ui.addMessage("You take a defensive stance!");
 
         // Monster's turn
         monsterTurn();
@@ -306,11 +310,11 @@ public class KeyHandler implements KeyListener {
             if (selectedItem.type == selectedItem.type_consumable) {
                 // For healing items (adjust item names according to your game)
                 if (selectedItem.name.equals("Hotdog") || selectedItem.name.contains("Hotdog")) {
-                    gp.player.life += 2; // Adjust healing amount
+                    gp.player.life += 5; // Adjust healing amount
                     if (gp.player.life > gp.player.maxLife) {
                         gp.player.life = gp.player.maxLife;
                     }
-                    gp.ui.addMessage("Restored 2 HP!");
+                    gp.ui.addMessage("Restored 5 HP!");
                     gp.player.inventory.remove(itemIndex);
 
                     // After using item, monster's turn

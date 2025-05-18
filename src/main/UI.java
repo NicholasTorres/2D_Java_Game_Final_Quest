@@ -83,6 +83,62 @@ public class UI {
             drawMessage();
             drawInventory();
         }
+        // Combat Animations
+        if (gp.gameState == gp.combatAnimationState){
+            drawCombatScreen();
+            drawMessage();
+            drawBasicAttack();
+        }
+    }
+
+    public void drawBasicAttack() {
+        int animationX = gp.tileSize + (gp.screenWidth / 3) + 200;
+        int AnimationY = gp.tileSize + (gp.screenHeight / 5 + 40);
+        int animationSpeed = 5; // Animation speed wow no way
+
+        if (gp.gameState == gp.combatAnimationState) {
+            BufferedImage animationSprite = null;
+
+            if (gp.player.animationCounter < 12 * animationSpeed) { // Control how long each frame is shown
+                int frameIndex = gp.player.animationCounter / animationSpeed + 1; // Calculate the current frame
+
+                if (frameIndex == 1) {
+                    animationSprite = gp.player.atk1;
+                } else if (frameIndex == 2) {
+                    animationSprite = gp.player.atk2;
+                } else if (frameIndex == 3) {
+                    animationSprite = gp.player.atk3;
+                } else if (frameIndex == 4) {
+                    animationSprite = gp.player.atk4;
+                } else if (frameIndex == 5) {
+                    animationSprite = gp.player.atk5;
+                } else if (frameIndex == 6) {
+                    animationSprite = gp.player.atk6;
+                } else if (frameIndex == 7) {
+                    animationSprite = gp.player.atk7;
+                } else if (frameIndex == 8) {
+                    animationSprite = gp.player.atk8;
+                } else if (frameIndex == 9) {
+                    animationSprite = gp.player.atk9;
+                } else if (frameIndex == 10) {
+                    animationSprite = gp.player.atk10;
+                } else if (frameIndex == 11) {
+                    animationSprite = gp.player.atk11;
+                } else if (frameIndex == 12) {
+                    animationSprite = gp.player.atk12;
+                }
+
+                if (animationSprite != null) {
+                    g2.drawImage(animationSprite, animationX, AnimationY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
+
+                gp.player.animationCounter++; // Increment the counter
+            } else {
+                // Animation finished, go back to combat state and trigger monster turn
+                gp.gameState = gp.combatState;
+                gp.player.animationCounter = 0; // Reset the counter for next time
+            }
+        }
     }
 
     public void drawCombatScreen() {
@@ -109,11 +165,11 @@ public class UI {
 
         // Get player sprite
         BufferedImage playerSprite = null;
-        if (gp.gameState == gp.combatState) {
+        if (gp.gameState == gp.combatState || gp.gameState == gp.inventoryCombatState) {
             if (gp.player.combatSpriteNum == 1) {
                 playerSprite = gp.player.up1; // Or whichever sprite you want for combat frame 1
             } else if (gp.player.combatSpriteNum == 2) {
-                playerSprite = gp.player.up2; // Or whichever sprite you want for combat frame 2
+                playerSprite = gp.player.up2; // Player up Sprite 2
             }
         }
 
@@ -145,6 +201,12 @@ public class UI {
                     else if (slime.spriteNum == 11) slimeSprite = slime.eleven;
                     else if (slime.spriteNum == 12) slimeSprite = slime.twelve;
                     break;
+            }
+
+            if (gp.player.combatSpriteNum == 1) {
+                playerSprite = gp.player.up1; // Or whichever sprite you want for combat frame 1
+            } else if (gp.player.combatSpriteNum == 2) {
+                playerSprite = gp.player.up2; // Or whichever sprite you want for combat frame 2
             }
 
             // Draw the player sprite
@@ -186,6 +248,7 @@ public class UI {
         // Draw Combat Menu
         drawCombatMenu();
     }
+
 
     public void drawCombatMenu() {
         // Combat options menu frame

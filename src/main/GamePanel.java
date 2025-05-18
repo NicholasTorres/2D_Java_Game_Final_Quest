@@ -28,6 +28,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxMap = 10;
     public int currentMap = 0;
     public int currentCombatMonsterIndex = -1;
+    public boolean playerAnimationComplete = false;
+    public boolean damageCalculated = false;
 
     // FPS
     int FPS = 60;
@@ -72,6 +74,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int combatState = 5;
     public final int inventoryCombatState = 6;  // New state for inventory during combat
     public final int gameOverState = 7;    // New game over state
+    public final int combatAnimationState= 8; // Lets give this a shot
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -169,7 +172,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == pauseState) {
 
         }
-        if (gameState == combatState) {
+        if (gameState == combatState || gameState == inventoryCombatState || gameState == combatAnimationState) {
             for (int i = 0; i < monster[1].length; i++) {
                 if (monster[currentMap][i] != null) {
                     if (monster[currentMap][i].alive == true && monster[currentMap][i].dying == false) {

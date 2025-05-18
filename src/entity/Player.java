@@ -19,8 +19,11 @@ public class Player extends Entity{
     public boolean attackCanceled = false;
     public ArrayList<Entity> inventory = new ArrayList<>();
     public final int inventorySize = 20;
-    public int combatSpriteCounter = 0; // New counter for combat animation
+    public int combatSpriteCounter = 0;
+    public int animationSpriteCounter = 0;
+    public int animationCounter = 0;// New counter for combat animation
     public int combatSpriteNum = 1;     // New sprite number for combat
+    public int animationSprite = 1;
 
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -48,6 +51,7 @@ public class Player extends Entity{
         getPlayerImage();
         getPlayerATKImage();
         setItems();
+        getAttackAnimation();
     }
 
     // This is the default spawn of the player character
@@ -108,6 +112,25 @@ public class Player extends Entity{
         left2 = setup("New_Mage_Left_2");
         right1 = setup("New_Mage_Right_1");
         right2 = setup("New_Mage_Right_2");
+    }
+
+    public void getAttackAnimation(){
+        try{
+            atk1 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack1.png"));
+            atk2 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack2.png"));
+            atk3 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack3.png"));
+            atk4 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack4.png"));
+            atk5 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack5.png"));
+            atk6 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack6.png"));
+            atk7 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack7.png"));
+            atk8 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack8.png"));
+            atk9 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack9.png"));
+            atk10 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack10.png"));
+            atk11 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack11.png"));
+            atk12 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack12.png"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public BufferedImage setup(String imageName) {
@@ -222,7 +245,7 @@ public class Player extends Entity{
                 spriteCounter = 0;
             }
         }
-        if (gp.gameState == gp.combatState){
+        if (gp.gameState == gp.combatState || gp.gameState == gp.inventoryCombatState){
             invincible = true;
             combatSpriteCounter++;
             if (combatSpriteCounter > 12) {
@@ -232,6 +255,39 @@ public class Player extends Entity{
                     combatSpriteNum = 1;
                 }
                 combatSpriteCounter = 0;
+            }
+        }
+
+        if (gp.gameState == gp.combatAnimationState) {
+            invincible = true;
+            animationSpriteCounter++;
+            if (animationSpriteCounter > 15) {
+                if (animationSprite == 1) {
+                    animationSprite = 2;
+                } else if (animationSprite == 2) {
+                    animationSprite = 3;
+                } else if (animationSprite == 3) {
+                    animationSprite = 4;
+                } else if (gp.player.animationSprite == 4) {
+                    animationSprite = 5;
+                } else if (gp.player.animationSprite == 5) {
+                    animationSprite = 6;
+                } else if (gp.player.animationSprite == 6) {
+                    animationSprite = 7;
+                } else if (gp.player.animationSprite == 7) {
+                    animationSprite = 8;
+                } else if (gp.player.animationSprite == 8) {
+                    animationSprite = 9;
+                } else if (gp.player.animationSprite == 9) {
+                    animationSprite = 10;
+                } else if (gp.player.animationSprite == 10) {
+                    animationSprite = 11;
+                } else if (gp.player.animationSprite == 11) {
+                    animationSprite = 12;
+                } else if (gp.player.animationSprite == 12) {
+                    animationSprite = 0;
+                }
+                animationSpriteCounter = 0;
             }
         }
 
@@ -296,6 +352,41 @@ public class Player extends Entity{
             spriteCounter = 0;
             attacking = false;
         }
+    }
+
+    public void basicAttack() {
+        System.out.println("Basic Attack Chosen");
+        choseAttack = true;
+        spriteCounter++;
+        if (spriteCounter > 4) {
+            if (spriteNum == 1) {
+                spriteNum = 2;
+            } else if (spriteNum == 2) {
+                spriteNum = 3;
+            } else if (spriteNum == 3){
+                spriteNum = 4;
+            } else if (spriteNum == 4){
+                spriteNum = 5;
+            } else if (spriteNum == 5){
+                spriteNum = 6;
+            } else if (spriteNum == 6){
+                spriteNum = 7;
+            } else if (spriteNum == 7){
+                spriteNum = 8;
+            } else if (spriteNum == 8){
+                spriteNum = 9;
+            } else if (spriteNum == 9){
+                spriteNum = 10;
+            } else if (spriteNum == 10){
+                spriteNum = 11;
+            } else if (spriteNum == 11){
+                spriteNum = 12;
+            } else if (spriteNum == 12){
+                spriteNum = 1;
+            }
+            spriteCounter = 0;
+        }
+        choseAttack = false;
     }
 
     // Method to pick up objects based on what they are
