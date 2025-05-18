@@ -57,7 +57,7 @@ public class Entity {
     public int actionLockCounter = 0;
     public int invincibleCounter;
     public int hpBarCounter = 0;
-    int dyingCounter = 0;
+    public int dyingCounter = 0;
 
     // Booleans
     public boolean collisionOn = false;
@@ -220,7 +220,7 @@ public class Entity {
         }
 
         if (dying == true){
-            dyingAnimation(g2);
+            dyingCounter++;
         }
 
         g2.drawImage(image, x, y, width, height, null);

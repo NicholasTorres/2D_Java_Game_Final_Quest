@@ -5,6 +5,7 @@ import entity.Player;
 //import entity.Player2;
 //import object.SuperObject;
 import tile.TileManager;
+import main.KeyHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -162,9 +163,9 @@ public class GamePanel extends JPanel implements Runnable {
                         monster[currentMap][i].speed = monster[currentMap][i].originalSpeed;
                         monster[currentMap][i].update();
                     }
-                    if (monster[currentMap][i].alive == false) {
-                        monster[currentMap][i] = null;
-                    }
+                    //if (monster[currentMap][i].alive == false) {
+                      //  monster[currentMap][i] = null;
+                    //}
                 }
             }
         }
@@ -184,8 +185,31 @@ public class GamePanel extends JPanel implements Runnable {
             }
             player.speed = player.combatSpeed;
             player.update();
+            updateCombatState();
         }
     }
+
+    public void updateCombatState() {
+        if ((gameState == combatAnimationState || gameState == combatState || gameState == combatSpellState) && currentCombatMonsterIndex != -1) {
+            Entity currentMonster = monster[currentMap][currentCombatMonsterIndex];
+            if (currentMonster != null && currentMonster.dying) {
+                currentMonster.dyingCounter++;
+                System.out.println("Dying counter: " + currentMonster.dyingCounter);
+                if (currentMonster.dyingCounter > 240) {
+                    currentMonster.alive = false;
+                    gameState = playState;
+                    ui.addMessage("You defeated the " + currentMonster.name + "!");
+                    player.exp += currentMonster.exp;
+                    ui.addMessage("You gained " + currentMonster.exp + " exp!");
+                    player.checkLevelUp();
+                    monster[currentMap][currentCombatMonsterIndex] = null;
+                    currentCombatMonsterIndex = -1;
+                }
+            }
+        }
+    }
+
+
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import entity.Entity;
@@ -227,34 +228,21 @@ public class KeyHandler implements KeyListener {
 
             // Apply damage to monster
             monster.life -= damage;
-
-            // Show damage message
             gp.ui.addMessage("Player dealt " + damage + " damage!");
 
             // Check if monster is defeated
-            if (monster.life <= 0) {
+            if (monster.life <= 0 && !monster.dying) {
+                monster.dying = true;
+                monster.dyingCounter = 0; // Start the death animation counter
+                gp.ui.addMessage("The " + monster.name + " is defeated!");
+            }
 
-                // Return to play state
-                gp.gameState = gp.playState;
-
-                // Monster defeated
-                gp.ui.addMessage("You defeated the " + monster.name + "!");
-
-                // Add exp to player
-                gp.player.exp += monster.exp;
-                gp.ui.addMessage("You gained " + monster.exp + " exp!");
-
-                // Check level up
-                gp.player.checkLevelUp();
-
-                // Set monster to null or respawn it as needed
-                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex] = null;
+            // Handle battle end after the death animation
             } else {
                 // Monster's turn
                 monsterTurn();
             }
         }
-    }
 
     // Defend implementation
     private void playerDefend() {

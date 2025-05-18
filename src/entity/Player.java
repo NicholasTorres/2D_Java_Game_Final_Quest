@@ -339,7 +339,7 @@ public class Player extends Entity{
 
             // Checking monster collision with the updated rectangles
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-            damageMonster(monsterIndex);
+            //damageMonster(monsterIndex);
 
             // Resetting the variables we changed
             x = currentX;
@@ -459,6 +459,7 @@ public class Player extends Entity{
     }
     */
 
+    /*
     // Checks to the see if monster is invincible, if not it will do damage calcs (simple defense - attack and vice versa)
     // It decreased monster HP and makes them invincible and displays their reaction plus a message of your damage to the mob
     // Then if the monster is slained, it is set to dying and messages appear telling the player what was slain and how much exp given
@@ -486,6 +487,8 @@ public class Player extends Entity{
             }
         }
     }
+
+     */
 
     // This checks if the player gained a level
     // If they did this will increase stats, set the attack and defense to what they should be after the re-calc
