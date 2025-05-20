@@ -235,20 +235,18 @@ public class KeyHandler implements KeyListener {
                 monster.dying = true;
                 monster.dyingCounter = 0; // Start the death animation counter
                 gp.ui.addMessage("The " + monster.name + " is defeated!");
-            }
-
-            // Handle battle end after the death animation
             } else {
-                // Monster's turn
+                // Monster's turn if not defeated
                 monsterTurn();
             }
         }
+    }
 
     // Defend implementation
     private void playerDefend() {
         // Increase player defense temporarily for this turn
         int originalDefense = gp.player.defense;
-        gp.player.defense += 1; // Double defense while defending
+        gp.player.defense += 1; // Plus 1 defense when defending
         gp.ui.addMessage("You take a defensive stance!");
 
         // Monster's turn
@@ -260,7 +258,7 @@ public class KeyHandler implements KeyListener {
 
     // Escape implementation
     private void attemptEscape() {
-        // Random chance to escape (e.g., 50%)
+        // 50% chance to escape
         boolean escaped = new java.util.Random().nextBoolean();
 
         if (escaped) {
@@ -304,8 +302,6 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-
-    // Trying to fix commit
     // Method to use selected item in combat
     private void useSelectedItem() {
         int itemIndex = gp.ui.getItemIndexOnSlot();
