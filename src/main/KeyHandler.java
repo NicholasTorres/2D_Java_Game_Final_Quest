@@ -126,7 +126,7 @@ public class KeyHandler implements KeyListener {
                 }
             }
             if (code == KeyEvent.VK_SPACE){
-                executeCombatCommand();
+                executeCombatSpellCommand();
             }
             if (code == KeyEvent.VK_ESCAPE) {
                 gp.gameState = gp.combatState;
@@ -206,6 +206,52 @@ public class KeyHandler implements KeyListener {
                 attemptEscape();
                 break;
         }
+    }
+
+    // Execute combat spell command based on selected option
+    public void executeCombatSpellCommand() {
+        switch (gp.ui.combatCommandSpellNum) {
+            case 0: // Fire
+                gp.gameState = gp.combatAnimationState;
+                performPlayerAttack();
+                break;
+            case 1: // Ice
+                gp.gameState = gp.combatAnimationState;
+                spellIce();
+                break;
+            case 2: // Thunder
+                gp.gameState = gp.combatAnimationState;
+                spellThunder();
+                break;
+            case 3: // Wind
+                gp.gameState = gp.combatAnimationState;
+                spellWind();
+                break;
+            case 4: // Earth
+                gp.gameState = gp.combatAnimationState;
+                spellEarth();
+                break;
+        }
+    }
+
+    private void spellFire() {
+
+    }
+
+    private void spellIce() {
+        gp.ui.addMessage("Not yet");
+    }
+
+    private void spellThunder() {
+        gp.ui.addMessage("Not yet");
+    }
+
+    private void spellWind() {
+        gp.ui.addMessage("Not yet");
+    }
+
+    private void spellEarth() {
+        gp.ui.addMessage("Not yet");
     }
 
     // Attack implementation

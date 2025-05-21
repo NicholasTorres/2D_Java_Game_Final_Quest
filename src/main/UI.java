@@ -90,13 +90,82 @@ public class UI {
         if (gp.gameState == gp.combatAnimationState){
             drawCombatScreen();
             drawMessage();
-            drawBasicAttack();
+            if(combatCommandNum == 0 && gp.gameState != gp.combatSpellState) {
+                drawBasicAttack();
+            }
+            if(combatCommandSpellNum == 0 && combatCommandNum != 0){
+                drawFire();
+            }
         }
         // Combat Spell
         if (gp.gameState == gp.combatSpellState){
             drawCombatScreen();
             drawMessage();
             drawSpellMenu();
+        }
+    }
+
+    // Not implemented yet
+    public void drawFire(){
+        // Starting position
+        int startX = gp.tileSize + (gp.screenWidth / 3);
+        int startY = gp.tileSize + (gp.screenHeight / 5 + 40);
+
+        // Target position (end point where projectile should end)
+        int targetX = gp.tileSize + (gp.screenWidth / 3) + 300; // 300 pixels to the right of starting position
+
+        int animationSpeed = 5; // Animation frame speed
+        int projectileSpeed = 6; // How many pixels the projectile moves each frame
+
+        if (gp.gameState == gp.combatAnimationState) {
+            BufferedImage animationSprite = null;
+
+            if (gp.player.animationCounter < 12 * animationSpeed) { // Controls how long the animation runs
+                int frameIndex = gp.player.animationCounter / animationSpeed + 1;
+
+                // Set the current animation frame based on frameIndex
+                if (frameIndex == 1) {
+                    animationSprite = gp.player.fire1;
+                } else if (frameIndex == 2) {
+                    animationSprite = gp.player.fire2;
+                } else if (frameIndex == 3) {
+                    animationSprite = gp.player.fire3;
+                } else if (frameIndex == 4) {
+                    animationSprite = gp.player.fire4;
+                } else if (frameIndex == 5) {
+                    animationSprite = gp.player.fire5;
+                } else if (frameIndex == 6) {
+                    animationSprite = gp.player.fire6;
+                } else if (frameIndex == 7) {
+                    animationSprite = gp.player.fire7;
+                } else if (frameIndex == 8) {
+                    animationSprite = gp.player.fire8;
+                } else if (frameIndex == 9) {
+                    animationSprite = gp.player.fire9;
+                } else if (frameIndex == 10) {
+                    animationSprite = gp.player.fire10;
+                } else if (frameIndex == 11) {
+                    animationSprite = gp.player.fire11;
+                } else if (frameIndex == 12) {
+                    animationSprite = gp.player.fire12;
+                }
+
+                if (animationSprite != null) {
+                    // Calculate current X position based on animation progress
+                    // This creates a smooth movement from startX to targetX
+                    int currentDistance = (gp.player.animationCounter * projectileSpeed);
+                    int currentX = startX + currentDistance;
+
+                    // Draw the projectile at the calculated position
+                    g2.drawImage(animationSprite, currentX, startY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
+
+                gp.player.animationCounter++; // Increment the counter
+            } else {
+                // Animation finished, go back to combat state and trigger monster turn
+                gp.gameState = gp.combatState;
+                gp.player.animationCounter = 0; // Reset the counter for next time
+            }
         }
     }
 

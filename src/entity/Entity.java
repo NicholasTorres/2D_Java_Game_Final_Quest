@@ -71,6 +71,7 @@ public class Entity {
     // Images
     public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen;
     public BufferedImage ATKup1, ATKup2, ATKdown1, ATKdown2, ATKleft1, ATKleft2, ATKright1, ATKright2, atk1, atk2, atk3, atk4, atk5, atk6, atk7, atk8, atk9, atk10, atk11, atk12;
+    public BufferedImage  fire1, fire2, fire3, fire4, fire5, fire6, fire7, fire8, fire9, fire10, fire11, fire12;
     public String direction = "down";
     public int spriteNum = 1;
 

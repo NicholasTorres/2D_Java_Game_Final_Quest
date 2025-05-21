@@ -52,6 +52,7 @@ public class Player extends Entity{
         getPlayerATKImage();
         setItems();
         getAttackAnimation();
+        getFireImages();
     }
 
     // This is the default spawn of the player character
@@ -128,6 +129,25 @@ public class Player extends Entity{
             atk10 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack10.png"));
             atk11 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack11.png"));
             atk12 = ImageIO.read(getClass().getResourceAsStream("/player/Mage_Attack12.png"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getFireImages(){
+        try{
+        fire1 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire2 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire3 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire4 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire5 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire6 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire7 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire8 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire9 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire10 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire11 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
+        fire12 = ImageIO.read(getClass().getResourceAsStream("/abilities/fireball.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
