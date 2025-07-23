@@ -14,6 +14,8 @@ public class MON_GreenSlime extends Entity {
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
 
+        getSlimeImage();
+
         type = type_monster;
         name = "Green Slime";
         speed = 1;
@@ -25,6 +27,7 @@ public class MON_GreenSlime extends Entity {
         defense = 0;
         exp = 2;
         speedIcon = one;
+        monsterBattleSpeed = 1;
 
         solidArea.x = 3;
         solidArea.y = 18;
@@ -132,6 +135,43 @@ public class MON_GreenSlime extends Entity {
             twelve = ImageIO.read(getClass().getResourceAsStream("/npc/Slime_2_12.png"));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void monsterTurn() {
+        if (gp.gameState == gp.combatState &&
+                gp.currentCombatMonsterIndex != -1 &&
+                gp.monster[gp.currentMap] != null &&
+                gp.currentCombatMonsterIndex < gp.monster[gp.currentMap].length &&
+                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex] != null &&
+                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTurnNow == true &&
+                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTookTurn == false) {
+
+            // Execute monster's attack
+            Entity monster = gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
+
+            System.out.println("Monster turn check - monsterTurnNow: " + monster.monsterTurnNow +
+                    ", monsterTookTurn: " + monster.monsterTookTurn);
+
+            if (monster.monsterTurnNow == true && monster.monsterTookTurn == false) {
+                System.out.println("EXECUTING MONSTER TURN!");
+            }
+
+            // Calculate damage to player
+            int damage = monster.attack - gp.player.defense;
+            if (damage < 0) {
+                damage = 0;
+            }
+
+            // Deal damage to player
+            gp.player.life -= damage;
+
+            // Mark that monster took its turn
+            monster.monsterTookTurn = true;
+
+            // Optional: Add some delay or visual feedback here
+            System.out.println("Monster attacked for " + damage + " damage!");
         }
     }
 

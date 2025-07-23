@@ -46,6 +46,7 @@ public class Entity {
     public static int hasKey = 0;
     public static int hasHotdog = 0;
     public String description = "";
+    public int monsterBattleSpeed;
 
     // Item stuff
     public int attackValue;
@@ -67,6 +68,8 @@ public class Entity {
     public boolean dying = false;
     public boolean hpBarOn = false;
     public boolean invincible = false;
+    public boolean monsterTookTurn = true;
+    public boolean monsterTurnNow = false;
 
     // Images
     public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen;
@@ -151,6 +154,11 @@ public class Entity {
     }
 
     public void speak() {
+    }
+
+    // Monster turn implementation
+    public void monsterTurn() {
+
     }
 
     public void draw(Graphics2D g2, int width, int height) { // Modified draw method

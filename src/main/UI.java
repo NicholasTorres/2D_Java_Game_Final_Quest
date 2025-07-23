@@ -26,7 +26,8 @@ public class UI {
     public static int combatCommandSpellNum = 0;
     public boolean combatSpellOptionsVisible = false;
     public final String[] combatSpellOptions = {"Fire", "Blizzard", "Thunder", "Wind", "Earth"};
-    public int frameCounter = 0;
+    private int frameCounter = 0;
+    private int monsterFrameCounter = 0;
 
     public UI(GamePanel gp){
         this.gp = gp;
@@ -56,6 +57,7 @@ public class UI {
         // Play State
         if(gp.gameState == gp.playState){
             // Playstate stuff
+            resetCombatState();
             drawPlayerlife();
             drawMessage();
         }
@@ -252,7 +254,11 @@ public class UI {
         int playerSpeedIconX = gp.player.playerSpeedIconX;
         int playerSpeedIconY = gp.player.playerSpeedIconY;
         int originalSpeedIconY = gp.player.playerSpeedIconY;
+        int MonsterSpeedIconX = gp.player.playerSpeedIconX;
+        int monsterSpeedIconY = gp.player.playerSpeedIconY;
+        int originalMonsterSpeedIconY = gp.player.playerSpeedIconY;
         int currentY = playerSpeedIconY;
+        int monsterCurrentY = playerSpeedIconY;
         int projectileSpeed = 1;
 
         // Enemy (Slime) drawing position (adjust as needed)
@@ -281,6 +287,7 @@ public class UI {
 
             MON_GreenSlime slime = (MON_GreenSlime) gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
             BufferedImage slimeSprite = null;
+            BufferedImage speedIconMonster = gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].speedIcon;
             frameCounter++;
 
             switch (slime.direction) {
@@ -320,13 +327,13 @@ public class UI {
             if (speedIconPlayer != null) {
                 // If the player hasn't taken their turn yet and animation isn't done, move the icon down
                 if (gp.combatStartAnimationDone == false && gp.player.playerTurnNow == false && gp.player.playerTookTurn == false) {
-                    int currentDistance = (frameCounter * projectileSpeed);
+                    int currentDistance = (frameCounter * gp.player.battleSpeed);
                     currentY = playerSpeedIconY + currentDistance;
 
                     g2.drawImage(speedIconPlayer, gp.player.playerSpeedIconX, currentY, gp.tileSize * 2, gp.tileSize * 2, null);
 
                     // Check if icon reached the bottom
-                    if (currentY >= (gp.tileSize * 12)) {
+                    if (currentY >= (gp.tileSize * 13)) {
                         gp.gameState = gp.combatReadyState;
                         gp.combatStartAnimationDone = true;
                         frameCounter = 0;
@@ -346,7 +353,7 @@ public class UI {
                 }
                 // If player's turn is ready (at bottom), keep icon at bottom
                 else if (gp.player.playerTurnNow == true) {
-                    int finalY = (gp.tileSize * 12);
+                    int finalY = (gp.tileSize * 13);
                     g2.drawImage(speedIconPlayer, gp.player.playerSpeedIconX, finalY, gp.tileSize * 2, gp.tileSize * 2, null);
                 }
                 // Default case - draw at starting position
@@ -360,32 +367,59 @@ public class UI {
                 g2.drawImage(slimeSprite, slimeX, slimeY, gp.tileSize * 2, gp.tileSize * 2, null);
             }
 
-            // Draw monster health
-            int monsterHealthX = slimeX;
-            int monsterHealthY = slimeY - 20;
-            int monsterHealthWidth = gp.tileSize * 2;
-            int monsterHealthHeight = 10;
+            // Slime speed icon logic - FIXED VERSION
+            if (speedIconMonster != null) {
+                // If the monster hasn't taken their turn yet, move the icon down
+                if (gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTurnNow == false &&
+                        gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTookTurn == false) {
 
-            // Health bar background
-            g2.setColor(new Color(35, 35, 35));
-            g2.fillRect(monsterHealthX, monsterHealthY, monsterHealthWidth, monsterHealthHeight);
+                    monsterFrameCounter++; // Independent counter
+                    int monsterCurrentDistance = (monsterFrameCounter * projectileSpeed);
+                    monsterCurrentY = monsterSpeedIconY + monsterCurrentDistance;
 
-            // Calculate health percentage
-            double healthPercentage = (double) slime.life / slime.maxLife;
-            int currentHealthWidth = (int) (monsterHealthWidth * healthPercentage);
+                    g2.drawImage(speedIconMonster, gp.player.playerSpeedIconX + 10, monsterCurrentY, gp.tileSize * 2, gp.tileSize * 2, null);
 
-            // Health bar fill
-            g2.setColor(new Color(255, 0, 30));
-            g2.fillRect(monsterHealthX, monsterHealthY, currentHealthWidth, monsterHealthHeight);
+                    // Check if monster icon reached the bottom (independent of player)
+                    if (monsterCurrentY >= (gp.tileSize * 13)) {
+                        gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTurnNow = true;
+                        // DON'T reset monsterFrameCounter here - let it keep the position
+                    }
+                }
+                // If monster took their turn, reset for next cycle
+                else if (gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTookTurn == true) {
+                    // Reset the monster's animation variables for next turn
+                    gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTookTurn = false;
+                    gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTurnNow = false;
+                    monsterFrameCounter = 0;
 
-            // Health bar border
-            g2.setColor(Color.WHITE);
-            g2.setStroke(new BasicStroke(1));
-            g2.drawRect(monsterHealthX, monsterHealthY, monsterHealthWidth, monsterHealthHeight);
+                    // Draw icon back at starting position
+                    g2.drawImage(speedIconMonster, gp.player.playerSpeedIconX + 10, originalMonsterSpeedIconY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
+                // If monster's turn is ready (at bottom), keep icon at bottom
+                else if (gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTurnNow == true) {
+                    int finalY = (gp.tileSize * 13);
+                    g2.drawImage(speedIconMonster, gp.player.playerSpeedIconX + 10, finalY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
+                // Default case - draw at starting position
+                else {
+                    g2.drawImage(speedIconMonster, gp.player.playerSpeedIconX + 10, originalMonsterSpeedIconY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
 
-            // Monster name and HP text
-            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18F));
-            g2.drawString("Slime HP: " + slime.life + "/" + slime.maxLife, monsterHealthX, monsterHealthY - 5);
+                // Temporary fix for monster taking its turn for now
+                if (gp.monster[gp.currentMap][gp.currentCombatMonsterIndex] != null &&
+                        gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTurnNow == true &&
+                        gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTookTurn == false) {
+
+                    // Monster attack is here (Still going to try to make it work from the monster's code)
+                    Entity monster = gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
+                    int damage = monster.attack - gp.player.defense;
+                    if (damage < 0) damage = 0;
+                    gp.player.life -= damage;
+                    monster.monsterTookTurn = true;
+
+                    addMessage("The monster attacked for " + damage + " damage! Player HP is now: " + gp.player.life);
+                }
+            }
         }
 
         // Speed Bar
@@ -396,6 +430,27 @@ public class UI {
         g2.setColor(Color.RED);
         g2.setStroke(new BasicStroke(1));
         g2.drawRect(gp.tileSize + 1300, gp.tileSize + (gp.screenWidth / 7), 10, gp.tileSize * 8);
+    }
+
+    public void resetCombatState() {
+        // Reset player combat state
+        gp.player.playerTurnNow = false;
+        gp.player.playerTookTurn = false;
+        gp.combatStartAnimationDone = false;
+
+        // Reset monster combat state
+        if (gp.currentCombatMonsterIndex != -1 &&
+                gp.monster[gp.currentMap] != null &&
+                gp.currentCombatMonsterIndex < gp.monster[gp.currentMap].length &&
+                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex] != null) {
+
+            gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTurnNow = false;
+            gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].monsterTookTurn = false;
+        }
+
+        // Reset frame counters
+        frameCounter = 0;
+        monsterFrameCounter = 0;
     }
 
 

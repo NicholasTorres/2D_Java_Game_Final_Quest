@@ -289,7 +289,7 @@ public class KeyHandler implements KeyListener {
             } else {
                 // Monster's turn if not defeated
                 gp.player.playerTookTurn = true;
-                monsterTurn();
+                //monsterTurn();
             }
         }
     }
@@ -302,7 +302,7 @@ public class KeyHandler implements KeyListener {
         gp.ui.addMessage("You take a defensive stance!");
 
         // Monster's turn
-        monsterTurn();
+        //monsterTurn();
 
         // Reset defense after monster turn
         gp.player.defense = originalDefense; // Return to normal defense
@@ -319,38 +319,7 @@ public class KeyHandler implements KeyListener {
         } else {
             gp.ui.addMessage("Failed to escape!");
             // Monster's turn
-            monsterTurn();
-        }
-    }
-
-    // Monster turn implementation
-    private void monsterTurn() {
-        if (gp.currentCombatMonsterIndex != -1 &&
-                gp.monster[gp.currentMap] != null &&
-                gp.currentCombatMonsterIndex < gp.monster[gp.currentMap].length &&
-                gp.monster[gp.currentMap][gp.currentCombatMonsterIndex] != null) {
-
-            Entity monster = gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
-
-            // Calculate damage
-            int damage = monster.attack - gp.player.defense;
-            if (damage < 0) {
-                damage = 0;
-            }
-
-            // Apply damage to player
-            gp.player.life -= damage;
-
-            // Show damage message
-            gp.ui.addMessage(monster.name + " dealt " + damage + " damage!");
-
-            // Check if player is defeated
-            if (gp.player.life <= 0) {
-                gp.ui.addMessage("You were defeated!");
-                // Reset player life to 1 or implement game over
-                gp.player.life = 1;
-                gp.gameState = gp.playState;
-            }
+            //monsterTurn();
         }
     }
 
@@ -373,7 +342,7 @@ public class KeyHandler implements KeyListener {
                     gp.player.inventory.remove(itemIndex);
 
                     // After using item, monster's turn
-                    monsterTurn();
+                    //monsterTurn();
 
                     // Return to combat state
                     gp.gameState = gp.combatState;

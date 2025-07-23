@@ -28,6 +28,7 @@ public class Player extends Entity{
     public int playerSpeedIconY = gp.tileSize + (gp.screenWidth / 7);
     public boolean playerTookTurn = true;
     public boolean playerTurnNow = false;
+    public int battleSpeed = 3;
 
 
     public Player(GamePanel gp, KeyHandler keyH){
