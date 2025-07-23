@@ -77,6 +77,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int gameOverState = 7;    // New game over state
     public final int combatAnimationState= 8; // Handles animations during combat
     public final int combatSpellState = 9; // This will be the menu for spells
+    public final int combatReadyState = 10; // combat ready state
+    public boolean combatStartAnimationDone = false;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -174,7 +176,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == pauseState) {
 
         }
-        if (gameState == combatState || gameState == inventoryCombatState || gameState == combatAnimationState || gameState == combatSpellState) {
+        if (gameState == combatState || gameState == inventoryCombatState || gameState == combatAnimationState || gameState == combatSpellState || gameState == combatReadyState) {
             for (int i = 0; i < monster[1].length; i++) {
                 if (monster[currentMap][i] != null) {
                     if (monster[currentMap][i].alive == true && monster[currentMap][i].dying == false) {
@@ -190,11 +192,10 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void updateCombatState() {
-        if ((gameState == combatAnimationState || gameState == combatState || gameState == combatSpellState) && currentCombatMonsterIndex != -1) {
+        if ((gameState == combatAnimationState || gameState == combatState || gameState == combatSpellState || gameState == combatReadyState) && currentCombatMonsterIndex != -1) {
             Entity currentMonster = monster[currentMap][currentCombatMonsterIndex];
             if (currentMonster != null && currentMonster.dying) {
                 currentMonster.dyingCounter++;
-                System.out.println("Dying counter: " + currentMonster.dyingCounter);
                 if (currentMonster.dyingCounter > 240) {
                     currentMonster.alive = false;
                     gameState = playState;

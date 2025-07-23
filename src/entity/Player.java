@@ -24,6 +24,10 @@ public class Player extends Entity{
     public int animationCounter = 0 ;// Controls the lockout when performing animations
     public int combatSpriteNum = 1;     // New sprite number for combat
     public int animationSprite = 1;
+    public int playerSpeedIconX = gp.tileSize + 1200;
+    public int playerSpeedIconY = gp.tileSize + (gp.screenWidth / 7);
+    public boolean playerTookTurn = true;
+    public boolean playerTurnNow = false;
 
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -53,6 +57,7 @@ public class Player extends Entity{
         setItems();
         getAttackAnimation();
         getFireImages();
+        setDefaultValues();
     }
 
     // This is the default spawn of the player character
@@ -77,6 +82,7 @@ public class Player extends Entity{
         defense = getDefense(); // Dexterity and armor
         maxLife = 6;
         life = maxLife;
+        speedIcon = up1;
     }
 
     public void setItems(){
@@ -265,7 +271,7 @@ public class Player extends Entity{
                 spriteCounter = 0;
             }
         }
-        if (gp.gameState == gp.combatState || gp.gameState == gp.inventoryCombatState || gp.gameState == gp.combatSpellState){
+        if (gp.gameState == gp.combatState || gp.gameState == gp.inventoryCombatState || gp.gameState == gp.combatSpellState || gp.gameState == gp.combatReadyState){
             invincible = true;
             combatSpriteCounter++;
             if (combatSpriteCounter > 12) {
@@ -407,6 +413,7 @@ public class Player extends Entity{
             spriteCounter = 0;
         }
         choseAttack = false;
+        playerTookTurn = true;
     }
 
     // Method to pick up objects based on what they are

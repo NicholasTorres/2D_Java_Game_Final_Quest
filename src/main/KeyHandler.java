@@ -92,6 +92,9 @@ public class KeyHandler implements KeyListener {
         }
         // Combat state
         else if (gp.gameState == gp.combatState){
+        }
+
+        else if (gp.gameState == gp.combatReadyState){
             if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
                 gp.ui.combatCommandNum--;
                 if (gp.ui.combatCommandNum < 0) {
@@ -111,6 +114,7 @@ public class KeyHandler implements KeyListener {
                 gp.gameState = gp.combatState;
             }
         }
+
         // Combat Spell State
         else if (gp.gameState == gp.combatSpellState){
             if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
@@ -129,7 +133,7 @@ public class KeyHandler implements KeyListener {
                 executeCombatSpellCommand();
             }
             if (code == KeyEvent.VK_ESCAPE) {
-                gp.gameState = gp.combatState;
+                gp.gameState = gp.combatReadyState;
             }
         }
         // Inventory in combat state
@@ -159,7 +163,7 @@ public class KeyHandler implements KeyListener {
             }
             if (code == KeyEvent.VK_ESCAPE) {
                 // Return to combat menu
-                gp.gameState = gp.combatState;
+                gp.gameState = gp.combatReadyState;
             }
         }
     }
@@ -275,6 +279,7 @@ public class KeyHandler implements KeyListener {
             // Apply damage to monster
             monster.life -= damage;
             gp.ui.addMessage("Player dealt " + damage + " damage!");
+            gp.player.playerTookTurn = true;
 
             // Check if monster is defeated
             if (monster.life <= 0 && !monster.dying) {
@@ -283,6 +288,7 @@ public class KeyHandler implements KeyListener {
                 gp.ui.addMessage("The " + monster.name + " is defeated!");
             } else {
                 // Monster's turn if not defeated
+                gp.player.playerTookTurn = true;
                 monsterTurn();
             }
         }

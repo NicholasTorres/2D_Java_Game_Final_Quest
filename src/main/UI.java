@@ -26,6 +26,7 @@ public class UI {
     public static int combatCommandSpellNum = 0;
     public boolean combatSpellOptionsVisible = false;
     public final String[] combatSpellOptions = {"Fire", "Blizzard", "Thunder", "Wind", "Earth"};
+    public int frameCounter = 0;
 
     public UI(GamePanel gp){
         this.gp = gp;
@@ -80,6 +81,14 @@ public class UI {
             drawCombatScreen();
             drawMessage();
         }
+
+        // Combat Ready State has combat menu
+        if (gp.gameState == gp.combatReadyState){
+            drawCombatScreen();
+            drawMessage();
+            drawCombatMenu();
+        }
+
         // Combat Inventory
         if (gp.gameState == gp.inventoryCombatState){
             drawCombatScreen();
@@ -94,6 +103,9 @@ public class UI {
                 drawBasicAttack();
             }
             if(combatCommandSpellNum == 0 && combatCommandNum != 0){
+                drawFire();
+            }
+            else if (combatCommandSpellNum == 1 && combatCommandNum != 0){
                 drawFire();
             }
         }
@@ -230,11 +242,18 @@ public class UI {
         x += gp.tileSize;
         y += gp.tileSize;
 
-        // --- Drawing Sprites ---
+        // Drawing Sprites
 
         // Player drawing position (adjust as needed)
         int playerX = gp.tileSize + (gp.screenWidth / 3) + 200;
         int playerY = gp.tileSize + (gp.screenHeight / 2);
+
+        // Player Speed Icon
+        int playerSpeedIconX = gp.player.playerSpeedIconX;
+        int playerSpeedIconY = gp.player.playerSpeedIconY;
+        int originalSpeedIconY = gp.player.playerSpeedIconY;
+        int currentY = playerSpeedIconY;
+        int projectileSpeed = 1;
 
         // Enemy (Slime) drawing position (adjust as needed)
         int slimeX = gp.tileSize + (gp.screenWidth / 3) + 200;
@@ -242,15 +261,18 @@ public class UI {
 
         // Get player sprite
         BufferedImage playerSprite = null;
+        BufferedImage speedIconPlayer = null;
         if (gp.gameState == gp.combatState || gp.gameState == gp.inventoryCombatState) {
             if (gp.player.combatSpriteNum == 1) {
-                playerSprite = gp.player.up1; // Or whichever sprite you want for combat frame 1
+                speedIconPlayer = gp.player.speedIcon;
+                playerSprite = gp.player.up1;
             } else if (gp.player.combatSpriteNum == 2) {
-                playerSprite = gp.player.up2; // Player up Sprite 2
+                speedIconPlayer = gp.player.speedIcon;
+                playerSprite = gp.player.up2;
             }
         }
 
-        // Get slime sprite (assuming your Slime class has a 'down1' BufferedImage)
+        // Get slime sprite
         if (gp.currentCombatMonsterIndex != -1 &&
                 gp.monster[gp.currentMap] != null &&
                 gp.currentCombatMonsterIndex < gp.monster[gp.currentMap].length &&
@@ -259,6 +281,7 @@ public class UI {
 
             MON_GreenSlime slime = (MON_GreenSlime) gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
             BufferedImage slimeSprite = null;
+            frameCounter++;
 
             switch (slime.direction) {
                 case "up":
@@ -281,20 +304,62 @@ public class UI {
             }
 
             if (gp.player.combatSpriteNum == 1) {
-                playerSprite = gp.player.up1; // Or whichever sprite you want for combat frame 1
+                speedIconPlayer = gp.player.speedIcon;
+                playerSprite = gp.player.up1;
             } else if (gp.player.combatSpriteNum == 2) {
-                playerSprite = gp.player.up2; // Or whichever sprite you want for combat frame 2
+                speedIconPlayer = gp.player.speedIcon;
+                playerSprite = gp.player.up2;
             }
 
             // Draw the player sprite
             if (playerSprite != null) {
-                g2.drawImage(playerSprite, playerX, playerY, gp.tileSize * 2, gp.tileSize * 2, null); // Adjust size as needed
+                g2.drawImage(playerSprite, playerX, playerY, gp.tileSize * 2, gp.tileSize * 2, null);
+            }
+
+            // Speed icon logic - FIXED VERSION
+            if (speedIconPlayer != null) {
+                // If the player hasn't taken their turn yet and animation isn't done, move the icon down
+                if (gp.combatStartAnimationDone == false && gp.player.playerTurnNow == false && gp.player.playerTookTurn == false) {
+                    int currentDistance = (frameCounter * projectileSpeed);
+                    currentY = playerSpeedIconY + currentDistance;
+
+                    g2.drawImage(speedIconPlayer, gp.player.playerSpeedIconX, currentY, gp.tileSize * 2, gp.tileSize * 2, null);
+
+                    // Check if icon reached the bottom
+                    if (currentY >= (gp.tileSize * 12)) {
+                        gp.gameState = gp.combatReadyState;
+                        gp.combatStartAnimationDone = true;
+                        frameCounter = 0;
+                        gp.player.playerTurnNow = true;
+                    }
+                }
+                // If player took their turn, reset for next cycle
+                else if (gp.player.playerTookTurn == true) {
+                    // Reset the animation variables for next turn
+                    gp.combatStartAnimationDone = false;
+                    gp.player.playerTookTurn = false;
+                    gp.player.playerTurnNow = false;
+                    frameCounter = 0;
+
+                    // Draw icon back at starting position
+                    g2.drawImage(speedIconPlayer, gp.player.playerSpeedIconX, gp.player.playerSpeedIconY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
+                // If player's turn is ready (at bottom), keep icon at bottom
+                else if (gp.player.playerTurnNow == true) {
+                    int finalY = (gp.tileSize * 12);
+                    g2.drawImage(speedIconPlayer, gp.player.playerSpeedIconX, finalY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
+                // Default case - draw at starting position
+                else {
+                    g2.drawImage(speedIconPlayer, gp.player.playerSpeedIconX, gp.player.playerSpeedIconY, gp.tileSize * 2, gp.tileSize * 2, null);
+                }
             }
 
             // Draw the slime sprite
             if (slimeSprite != null) {
-                g2.drawImage(slimeSprite, slimeX, slimeY, gp.tileSize * 2, gp.tileSize * 2, null); // Adjust size as needed
+                g2.drawImage(slimeSprite, slimeX, slimeY, gp.tileSize * 2, gp.tileSize * 2, null);
             }
+
             // Draw monster health
             int monsterHealthX = slimeX;
             int monsterHealthY = slimeY - 20;
@@ -322,8 +387,15 @@ public class UI {
             g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18F));
             g2.drawString("Slime HP: " + slime.life + "/" + slime.maxLife, monsterHealthX, monsterHealthY - 5);
         }
-        // Draw Combat Menu
-        drawCombatMenu();
+
+        // Speed Bar
+        g2.setColor(new Color(255, 255, 255));
+        g2.fillRect(gp.tileSize + 1300, gp.tileSize + (gp.screenWidth / 7), 10, gp.tileSize * 8);
+
+        // Speed bar border
+        g2.setColor(Color.RED);
+        g2.setStroke(new BasicStroke(1));
+        g2.drawRect(gp.tileSize + 1300, gp.tileSize + (gp.screenWidth / 7), 10, gp.tileSize * 8);
     }
 
 
