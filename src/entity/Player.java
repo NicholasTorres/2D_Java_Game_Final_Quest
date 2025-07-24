@@ -531,8 +531,12 @@ public class Player extends Entity{
             nextLevelExp = nextLevelExp * 2;
             exp = 0;
             maxLife += 2;
+            maxMana += 5;
             if (life != maxLife){
                 life = maxLife;
+            }
+            if (mana != maxMana){
+                mana = maxMana;
             }
             strength++;
             dexterity++;
@@ -541,7 +545,7 @@ public class Player extends Entity{
 
             gp.gameState = gp.dialogueState;
             gp.ui.currentDialogue = "You are now level " + level + "!\n"
-                    + "Max life increased!\n" + "Strength up!   Attack up!\n" + "Dexterity up!   Defense up!";
+                    + "Max life and Mana increased!\n" + "Strength up!   Attack up!\n" + "Dexterity up!   Defense up!";
         }
     }
 
