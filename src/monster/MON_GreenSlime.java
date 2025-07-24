@@ -35,6 +35,7 @@ public class MON_GreenSlime extends Entity {
         solidArea.height = 30;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
+        fireWeakness = true;
 
         getSlimeImage();
     }

@@ -70,6 +70,11 @@ public class Entity {
     public boolean invincible = false;
     public boolean monsterTookTurn = true;
     public boolean monsterTurnNow = false;
+    public boolean fireWeakness;
+    public boolean iceWeakness;
+    public boolean electricWeakness;
+    public boolean earthWeakness;
+    public boolean healWeakness;
 
     // Images
     public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen;

@@ -217,7 +217,7 @@ public class KeyHandler implements KeyListener {
         switch (gp.ui.combatCommandSpellNum) {
             case 0: // Fire
                 gp.gameState = gp.combatAnimationState;
-                performPlayerAttack();
+                spellFire();
                 break;
             case 1: // Ice
                 gp.gameState = gp.combatAnimationState;
@@ -238,8 +238,59 @@ public class KeyHandler implements KeyListener {
         }
     }
 
+    // SPELLS AND ATTACKS
+
     private void spellFire() {
 
+        int damage;
+        int spellCost = 5;
+        if (gp.player.mana >= spellCost){
+            if (gp.currentCombatMonsterIndex != -1 &&
+                    gp.monster[gp.currentMap] != null &&
+                    gp.currentCombatMonsterIndex < gp.monster[gp.currentMap].length &&
+                    gp.monster[gp.currentMap][gp.currentCombatMonsterIndex] != null) {
+
+                Entity monster = gp.monster[gp.currentMap][gp.currentCombatMonsterIndex];
+
+                gp.gameState = gp.combatAnimationState;
+                gp.player.animationCounter = 0;
+
+                // Calculate damage
+
+                if (monster.fireWeakness == true) {
+                    damage = (gp.player.attack - monster.defense) * 2;
+                    if (damage < 0) {
+                        damage = 0;
+                    }
+                }
+                else {
+                    damage = (gp.player.attack - monster.defense);
+                    if (damage < 0) {
+                        damage = 0;
+                    }
+                }
+
+                // Apply damage to monster
+                monster.life -= damage;
+                gp.player.mana -= spellCost;
+                gp.ui.addMessage("Player dealt " + damage + " damage!");
+                gp.player.playerTookTurn = true;
+
+                // Check if monster is defeated
+                if (monster.life <= 0 && !monster.dying) {
+                    monster.dying = true;
+                    monster.dyingCounter = 0; // Start the death animation counter
+                    gp.ui.addMessage("The " + monster.name + " is defeated!");
+                } else {
+                    // Monster's turn if not defeated
+                    gp.player.playerTookTurn = true;
+                }
+            }
+            }
+        else {
+            gp.ui.addMessage("Not enough mana! The spell fizziled!");
+            gp.player.playerTookTurn = true;
+        }
     }
 
     private void spellIce() {

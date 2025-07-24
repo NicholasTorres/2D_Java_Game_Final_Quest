@@ -29,6 +29,8 @@ public class Player extends Entity{
     public boolean playerTookTurn = true;
     public boolean playerTurnNow = false;
     public int battleSpeed = 3;
+    public int maxMana;
+    public int mana;
 
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -83,6 +85,8 @@ public class Player extends Entity{
         defense = getDefense(); // Dexterity and armor
         maxLife = 6;
         life = maxLife;
+        maxMana = 10;
+        mana = maxMana;
         speedIcon = up1;
     }
 

@@ -98,19 +98,20 @@ public class UI {
             drawInventory();
         }
         // Combat Animations
-        if (gp.gameState == gp.combatAnimationState){
+        if (gp.gameState == gp.combatAnimationState) {
             drawCombatScreen();
             drawMessage();
-            if(combatCommandNum == 0 && gp.gameState != gp.combatSpellState) {
+            if (combatCommandNum == 0 && gp.gameState != gp.combatSpellState) {
                 drawBasicAttack();
             }
-            if(combatCommandSpellNum == 0 && combatCommandNum != 0){
-                drawFire();
+            if (combatCommandSpellNum == 0 && combatCommandNum != 0) {
+                if (gp.player.mana >= 5)
+                    drawFire();
+                }
+                else if (combatCommandSpellNum == 1 && combatCommandNum != 0){
+                    drawFire();
+                }
             }
-            else if (combatCommandSpellNum == 1 && combatCommandNum != 0){
-                drawFire();
-            }
-        }
         // Combat Spell
         if (gp.gameState == gp.combatSpellState){
             drawCombatScreen();
@@ -323,6 +324,8 @@ public class UI {
                 g2.drawImage(playerSprite, playerX, playerY, gp.tileSize * 2, gp.tileSize * 2, null);
             }
 
+            // SPEED ICON LOGIC BELOW FOR PLAYER AND MONSTERS AND DRAWING IT
+
             // Speed icon logic - FIXED VERSION
             if (speedIconPlayer != null) {
                 // If the player hasn't taken their turn yet and animation isn't done, move the icon down
@@ -430,6 +433,89 @@ public class UI {
         g2.setColor(Color.RED);
         g2.setStroke(new BasicStroke(1));
         g2.drawRect(gp.tileSize + 1300, gp.tileSize + (gp.screenWidth / 7), 10, gp.tileSize * 8);
+
+        // PLAYER AND MONSTER HEALTH AND MANA
+
+        // Draw monster health
+        int monsterHealthX = slimeX;
+        int monsterHealthY = slimeY - 20;
+
+        int monsterHealthWidth = gp.tileSize * 2;
+        int monsterHealthHeight = 10;
+
+        // Health bar background
+        g2.setColor(new Color(35, 35, 35));
+        g2.fillRect(monsterHealthX, monsterHealthY, monsterHealthWidth, monsterHealthHeight);
+
+        // Calculate health percentage
+        double healthPercentage = (double) gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].life / gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].maxLife;
+        int currentHealthWidth = (int) (monsterHealthWidth * healthPercentage);
+
+        // Health bar fill
+        g2.setColor(new Color(255, 0, 30));
+        g2.fillRect(monsterHealthX, monsterHealthY, currentHealthWidth, monsterHealthHeight);
+
+        // Health bar border
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(1));
+        g2.drawRect(monsterHealthX, monsterHealthY, monsterHealthWidth, monsterHealthHeight);
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18F));
+        g2.drawString("Slime HP: " + gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].life + "/" + gp.monster[gp.currentMap][gp.currentCombatMonsterIndex].maxLife, monsterHealthX, monsterHealthY - 5);
+
+        // Draw Player Health
+        int playerHealthX = playerX;
+        int playerHealthY = playerY - 20;
+
+        int playerHealthWidth = gp.tileSize * 2;
+        int playerHealthHeight = 10;
+
+        // Health bar background
+        g2.setColor(new Color(35, 35, 35));
+        g2.fillRect(playerHealthX, playerHealthY, playerHealthWidth, playerHealthHeight);
+
+        // Calculate health percentage
+        double playerHealthPercentage = (double) gp.player.life / gp.player.maxLife;
+        int playerCurrentHealthWidth = (int) (playerHealthWidth * playerHealthPercentage);
+
+        // Health bar fill
+        g2.setColor(new Color(255, 0, 30));
+        g2.fillRect(playerHealthX, playerHealthY, playerCurrentHealthWidth, playerHealthHeight);
+
+        // Health bar border
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(1));
+        g2.drawRect(playerHealthX, playerHealthY, playerHealthWidth, playerHealthHeight);
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18F));
+        g2.drawString("Player HP: " + gp.player.life + "/" + gp.player.maxLife, playerHealthX, playerHealthY - 5);
+
+        // Draw Player Mana
+        int playerManaX = playerX;
+        int playerManaY = playerY - 60;
+
+        int playerManaWidth = gp.tileSize * 2;
+        int playerManaHeight = 10;
+
+        // Mana bar background
+        g2.setColor(new Color(35, 35, 35));
+        g2.fillRect(playerManaX, playerManaY, playerManaWidth, playerManaHeight);
+
+        // Calculate Mana percentage
+        double playerManaPercentage = (double) gp.player.mana / gp.player.maxMana;
+        int playerCurrentManaWidth = (int) (playerManaWidth * playerManaPercentage);
+
+        // Mana bar fill
+        g2.setColor(new Color(30, 0, 255));
+        g2.fillRect(playerManaX, playerManaY, playerCurrentManaWidth, playerManaHeight);
+
+        // Mana bar border
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(1));
+        g2.drawRect(playerManaX, playerManaY, playerManaWidth, playerManaHeight);
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18F));
+        g2.drawString("Slime Mana: " + gp.player.mana + "/" + gp.player.maxMana, playerManaX, playerManaY - 5);
     }
 
     public void resetCombatState() {
